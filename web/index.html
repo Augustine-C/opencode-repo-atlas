@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>opencode-related</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>opencode-related <span class="subtitle">相关仓库注册表</span></h1>
+      <div id="banner" class="banner"></div>
+    </header>
+
+    <nav id="tabs">
+      <button data-tab="repos" class="active">仓库</button>
+      <button data-tab="groups">项目级关联（分组）</button>
+      <button data-tab="edges">成对关联</button>
+      <button data-tab="query">单仓查询</button>
+      <button data-tab="graph">全局视图</button>
+    </nav>
+
+    <main>
+      <section id="tab-repos" class="tab active">
+        <form id="repo-add" class="card row-form">
+          <input name="url" placeholder="git remote URL 或 host/path（如 github.com/acme/billing）" required />
+          <input name="name" placeholder="显示名（可选）" />
+          <input name="description" placeholder="描述：给 agent 看的用途说明" />
+          <button type="submit">添加仓库</button>
+        </form>
+        <div id="repo-list"></div>
+      </section>
+
+      <section id="tab-groups" class="tab">
+        <p class="hint">分组内的仓库自动两两互连。成员变更即时生效，下次 prompt 就会带上对应 references。</p>
+        <form id="group-add" class="card row-form">
+          <input name="name" placeholder="分组名（如 payments-platform）" required />
+          <button type="submit">创建分组</button>
+        </form>
+        <div id="group-list"></div>
+      </section>
+
+      <section id="tab-edges" class="tab">
+        <p class="hint">成对关联只连接指定的两个仓库，适合点对点的依赖说明。</p>
+        <form id="edge-add" class="card row-form">
+          <select name="a" required></select>
+          <span class="arrow">↔</span>
+          <select name="b" required></select>
+          <input name="note" placeholder="备注（可选）" />
+          <button type="submit">添加关联</button>
+        </form>
+        <div id="edge-list"></div>
+      </section>
+
+      <section id="tab-query" class="tab">
+        <form id="query-form" class="card row-form">
+          <select name="key" required></select>
+          <button type="submit">查询关联</button>
+        </form>
+        <div id="query-result"></div>
+      </section>
+
+      <section id="tab-graph" class="tab">
+        <div class="card row-form">
+          <button id="graph-refresh" type="button">刷新</button>
+          <label class="auto"><input type="checkbox" id="graph-auto" checked /> 自动刷新（5s）</label>
+        </div>
+        <div id="graph-wrap">
+          <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+          <aside id="graph-info" class="card"></aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

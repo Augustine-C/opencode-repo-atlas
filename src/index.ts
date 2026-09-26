@@ -5,6 +5,7 @@ import { identify, type RepoIdentity } from "./identity"
 import { parseOptions } from "./options"
 import { RegistryStore } from "./registry"
 import { References } from "./references"
+import { startServer } from "./server"
 
 export default Plugin.define({
   id: "related-repos",
@@ -24,6 +25,18 @@ export default Plugin.define({
     })
     await references.start()
 
+    const server = await startServer({
+      port: options.port,
+      store,
+      self: { key: identity?.key, directory: ctx.location.directory, missing: () => references.missing },
+      onChange: () => {
+        void (async () => {
+          if (identity) await registerSelf(store, identity, ctx.location.directory)
+          await references.refresh()
+        })().catch((error) => console.error("[related-repos] refresh failed:", error))
+      },
+    })
+
     const watcher = startWatcher(store, async () => {
       if (identity) await registerSelf(store, identity, ctx.location.directory)
       await references.refresh()
@@ -31,6 +44,7 @@ export default Plugin.define({
 
     return () => {
       watcher.stop()
+      void server.stop()
       void references.stop()
     }
   },
