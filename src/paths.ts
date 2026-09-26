@@ -3,7 +3,7 @@ import { join } from "node:path"
 
 export function defaultRegistryPath(): string {
   const dataHome = process.env.XDG_DATA_HOME || join(homedir(), ".local", "share")
-  return join(dataHome, "opencode", "related-repos.json")
+  return join(dataHome, "opencode", "repo-atlas.json")
 }
 
 export function expandHome(input: string): string {

@@ -8,7 +8,7 @@ import { References } from "./references"
 import { startServer } from "./server"
 
 export default Plugin.define({
-  id: "related-repos",
+  id: "repo-atlas",
   async setup(ctx) {
     const options = parseOptions(ctx.options as Record<string, unknown> | undefined)
     const store = new RegistryStore(options.registryPath)
@@ -33,7 +33,7 @@ export default Plugin.define({
         void (async () => {
           if (identity) await registerSelf(store, identity, ctx.location.directory)
           await references.refresh()
-        })().catch((error) => console.error("[related-repos] refresh failed:", error))
+        })().catch((error) => console.error("[repo-atlas] refresh failed:", error))
       },
     })
 
@@ -75,7 +75,7 @@ function startWatcher(store: RegistryStore, onChange: () => Promise<void>, inter
         await store.load()
         await onChange()
       } catch (error) {
-        console.error("[related-repos] watcher tick failed:", error)
+        console.error("[repo-atlas] watcher tick failed:", error)
       }
     })()
   }, intervalMs)

@@ -49,7 +49,7 @@ describe("removeRepo", () => {
 
 describe("RegistryStore", () => {
   test("save, load and change detection round trip", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "related-repos-"))
+    const dir = await mkdtemp(join(tmpdir(), "repo-atlas-"))
     try {
       const store = new RegistryStore(join(dir, "nested", "registry.json"))
       await store.load()
@@ -82,7 +82,7 @@ describe("RegistryStore", () => {
   })
 
   test("corrupt file is moved aside and registry resets", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "related-repos-"))
+    const dir = await mkdtemp(join(tmpdir(), "repo-atlas-"))
     try {
       const path = join(dir, "registry.json")
       await Bun.write(path, "{not json")

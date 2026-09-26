@@ -1,6 +1,6 @@
-# opencode-related
+# opencode-repo-atlas
 
-OpenCode 插件：为多仓库大项目提供统一的相关仓库注册表。在任一仓库打开 OpenCode 时，自动把关联仓库的本地 checkout 注入为 named references，并提供一个 Web 管理界面（仓库/分组/成对关联/单仓查询/全局节点图）。
+OpenCode 插件：为多仓库大项目提供统一的**相关仓库图谱**。在任一仓库打开 OpenCode 时，自动把关联仓库的本地 checkout 注入为 named references，并提供一个 Web 管理界面（仓库/分组/成对关联/单仓查询/全局关系图谱）。
 
 ## 特性
 
@@ -35,10 +35,10 @@ references 通过 `ctx.reference.transform` 注入；transform 闭包每次重�
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      "package": "opencode-related",
+      "package": "opencode-repo-atlas",
       "options": {
         "port": 4579,
-        "registryPath": "~/.local/share/opencode/related-repos.json"
+        "registryPath": "~/.local/share/opencode/repo-atlas.json"
       }
     }
   ]
@@ -48,10 +48,10 @@ references 通过 `ctx.reference.transform` 注入；transform 闭包每次重�
 | 选项 | 默认 | 说明 |
 |---|---|---|
 | `port` | `4579` | WebUI/API 端口；被占用时本实例让位（已有实例在服务，数据共享同一注册表，行为一致） |
-| `registryPath` | `~/.local/share/opencode/related-repos.json`（遵循 `XDG_DATA_HOME`） | 注册表文件；指向团队 meta-repo 内的文件即可共享 |
+| `registryPath` | `~/.local/share/opencode/repo-atlas.json`（遵循 `XDG_DATA_HOME`） | 注册表文件；指向团队 meta-repo 内的文件即可共享 |
 | `roots` | `[]` | 约定根目录列表。注册表里没有某关联仓库的本机路径时，按 `<root>/<仓库名>` 兜底探测 |
 
-## WebUI
+## WebUI（图谱管理界面）
 
 打开 `http://localhost:4579`：
 

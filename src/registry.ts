@@ -110,7 +110,7 @@ export class RegistryStore {
     } catch (error) {
       const backup = `${this.#path}.corrupt-${Date.now()}`
       await rename(this.#path, backup).catch(() => {})
-      console.error(`[related-repos] registry unreadable, moved to ${backup}:`, error)
+      console.error(`[repo-atlas] registry unreadable, moved to ${backup}:`, error)
       this.#cache = emptyRegistry()
       return this.#cache
     }

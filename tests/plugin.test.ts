@@ -36,7 +36,7 @@ function scaffold(root: string) {
 
 describe("plugin setup", () => {
   test("injects references for related repos and serves the api", async () => {
-    const root = mkdtempSync(join(tmpdir(), "related-e2e-"))
+    const root = mkdtempSync(join(tmpdir(), "repo-atlas-e2e-"))
     try {
       const { selfDir, neighborDir, registryPath } = scaffold(root)
 
@@ -99,7 +99,7 @@ describe("plugin setup", () => {
   })
 
   test("idles cleanly outside a git repo but still serves the api", async () => {
-    const root = mkdtempSync(join(tmpdir(), "related-e2e-"))
+    const root = mkdtempSync(join(tmpdir(), "repo-atlas-e2e-"))
     try {
       const plainDir = join(root, "plain")
       mkdirSync(plainDir)

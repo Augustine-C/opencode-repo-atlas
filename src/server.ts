@@ -40,13 +40,13 @@ export async function startServer(input: ServerInput): Promise<ServerHandle> {
     server = Bun.serve({ port: input.port, fetch: (req) => route(req, input) })
   } catch (error) {
     if (isAddrInUse(error)) {
-      console.log(`[related-repos] port ${input.port} busy — web ui already served there`)
+      console.log(`[repo-atlas] port ${input.port} busy — web ui already served there`)
       return { port: input.port, stop: async () => {} }
     }
     throw error
   }
   const port = server.port ?? input.port
-  console.log(`[related-repos] web ui: http://localhost:${port}`)
+  console.log(`[repo-atlas] web ui: http://localhost:${port}`)
   return {
     port,
     stop: async () => {
@@ -93,7 +93,7 @@ async function route(req: Request, input: ServerInput): Promise<Response> {
     return json({ error: "not found" }, 404)
   } catch (error) {
     if (error instanceof HttpError) return json({ error: error.message }, error.status)
-    console.error("[related-repos] request failed:", error)
+    console.error("[repo-atlas] request failed:", error)
     return json({ error: "internal error" }, 500)
   }
 }

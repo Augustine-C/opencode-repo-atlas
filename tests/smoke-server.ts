@@ -5,7 +5,7 @@ import { join } from "node:path"
 import { RegistryStore } from "../src/registry"
 import { startServer } from "../src/server"
 
-const dir = mkdtempSync(join(tmpdir(), "related-smoke-"))
+const dir = mkdtempSync(join(tmpdir(), "repo-atlas-smoke-"))
 const store = new RegistryStore(join(dir, "registry.json"))
 await store.load()
 

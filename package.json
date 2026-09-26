@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "opencode-related",
+  "name": "opencode-repo-atlas",
   "version": "0.1.0",
-  "description": "OpenCode plugin: unified related-repo registry with automatic references injection and a web UI",
+  "description": "OpenCode plugin: a related-repo atlas — unified registry, automatic references injection, and a relation graph web UI",
   "type": "module",
   "license": "MIT",
   "main": "./src/index.ts",
