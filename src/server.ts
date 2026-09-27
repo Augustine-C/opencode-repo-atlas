@@ -2,7 +2,7 @@ import { existsSync, statSync } from "node:fs"
 import { hostname } from "node:os"
 import { join, resolve } from "node:path"
 import { expandHome } from "./paths"
-import { normalizeRemote, repoNameFromKey } from "./identity"
+import { gitRemote, normalizeRemote, repoNameFromKey } from "./identity"
 import {
   groupId,
   isRepoKey,
@@ -153,13 +153,31 @@ function queryKey(url: URL, field = "key"): string {
   return keyParam(url.searchParams.get(field), field)
 }
 
-function repoKey(payload: Record<string, unknown>): string {
-  if (typeof payload.url === "string" && payload.url.trim().length > 0) {
-    const normalized = normalizeRemote(payload.url)
-    if (!normalized) throw new HttpError(400, "unrecognized remote URL")
-    return normalized
+/**
+ * Resolve the repo identity from a remote URL, an existing key, or a local git
+ * checkout path (`/` or `~` prefixed). A local path also yields a checkout to
+ * register for the current host.
+ */
+async function repoInput(payload: Record<string, unknown>): Promise<{ key: string; checkout?: string }> {
+  const raw =
+    optionalString(payload.url) ??
+    optionalString(payload.path) ??
+    optionalString(payload.key)
+  if (raw && (raw.startsWith("/") || raw.startsWith("~"))) {
+    const directory = resolve(expandHome(raw))
+    if (!existsSync(directory) || !statSync(directory).isDirectory()) throw new HttpError(400, `not a directory: ${directory}`)
+    const remote = await gitRemote(directory)
+    if (!remote) throw new HttpError(400, `no git remote (origin) found in ${directory}`)
+    const key = normalizeRemote(remote)
+    if (!key) throw new HttpError(400, `unrecognized remote URL in ${directory}: ${remote}`)
+    return { key, checkout: directory }
   }
-  return keyParam(payload.key, "key or url")
+  if (raw) {
+    const key = normalizeRemote(raw)
+    if (!key) throw new HttpError(400, "unrecognized remote URL")
+    return { key }
+  }
+  throw new HttpError(400, "url, path or key is required")
 }
 
 // --- handlers ---------------------------------------------------------------
@@ -202,12 +220,13 @@ function localCheckout(repo: { checkouts: Record<string, string[]> } | undefined
 }
 
 async function addRepo(input: ServerInput, payload: Record<string, unknown>) {
-  const key = repoKey(payload)
+  const { key, checkout } = await repoInput(payload)
   const name = optionalString(payload.name) ?? repoNameFromKey(key)
   const description = optionalString(payload.description)
   return mutate(input, (reg) => {
     if (reg.repos[key]) throw new HttpError(409, `repo ${key} already exists`)
-    reg.repos[key] = { name, ...(description ? { description } : {}), checkouts: {} }
+    const checkouts = checkout ? { [hostname()]: [checkout] } : {}
+    reg.repos[key] = { name, ...(description ? { description } : {}), checkouts }
     return { key, repo: reg.repos[key] }
   })
 }

@@ -23,7 +23,7 @@
     <main>
       <section id="tab-repos" class="tab active">
         <form id="repo-add" class="card row-form">
-          <input name="url" placeholder="git remote URL 或 host/path（如 github.com/acme/billing）" required />
+          <input name="url" placeholder="git remote URL、host/path 或本机路径（~ 或 / 开头会自动探测 git remote 并登记 checkout）" required />
           <input name="name" placeholder="显示名（可选）" />
           <input name="description" placeholder="描述：给 agent 看的用途说明" />
           <button type="submit">添加仓库</button>

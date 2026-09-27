@@ -70,7 +70,7 @@ references 通过 `ctx.reference.transform` 注入；transform 闭包每次重�
 | `GET /api/state` | 注册表全量 + 当前实例身份（key/registered/missing）+ 主机名 |
 | `GET /api/graph` | 节点/链路/分组（链路带聚合原因，用于图视图） |
 | `GET /api/related?key=` | 单仓有效关联：name/description/via/本机 path |
-| `POST /api/repos` | `{url}` 或 `{key}` + 可选 `name`、`description`；重复返回 409 |
+| `POST /api/repos` | `{url}` / `{path}`（本机路径，自动探测 git remote 并登记 checkout）/ `{key}` + 可选 `name`、`description`；重复返回 409 |
 | `PATCH /api/repos?key=` | 改 `name`/`description` |
 | `DELETE /api/repos?key=` | 删除仓库并清理分组与边 |
 | `POST /api/checkouts` | `{key, path}` 登记本机 checkout（路径必须存在，`~` 可用） |
