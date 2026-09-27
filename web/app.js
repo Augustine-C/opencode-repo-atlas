@@ -127,11 +127,11 @@ function repoCard(key, repo) {
         el("button", { class: "ghost", text: "查询关联", onclick: () => { $("#query-form").elements.key.value = key; switchTab("query"); runQuery(key) } }),
         el("button", { class: "ghost", text: "改名", onclick: async () => {
           const name = prompt("显示名", repo.name)
-          if (name && name !== repo.name) api("/api/repos", { method: "PATCH", body: { key, name } }).then(refresh).catch(alert)
+          if (name && name !== repo.name) api(`/api/repos?key=${encodeURIComponent(key)}`, { method: "PATCH", body: { name } }).then(refresh).catch(alert)
         } }),
         el("button", { class: "ghost", text: "描述", onclick: async () => {
           const description = prompt("描述（给 agent 看的用途说明）", repo.description || "")
-          if (description !== null) api("/api/repos", { method: "PATCH", body: { key, description } }).then(refresh).catch(alert)
+          if (description !== null) api(`/api/repos?key=${encodeURIComponent(key)}`, { method: "PATCH", body: { description } }).then(refresh).catch(alert)
         } }),
         el("button", { class: "danger", text: "删除", onclick: () => {
           if (confirm(`删除 ${repo.name}（${key}）？其分组与成对关联会一并清理。`)) {
@@ -172,7 +172,7 @@ function groupCard(group) {
           class: "x",
           text: "×",
           onclick: () =>
-            api("/api/groups", { method: "PATCH", body: { id: group.id, members: group.members.filter((m) => m !== member) } })
+            api(`/api/groups?id=${encodeURIComponent(group.id)}`, { method: "PATCH", body: { members: group.members.filter((m) => m !== member) } })
               .then(refresh)
               .catch(alert),
         }),
@@ -185,7 +185,7 @@ function groupCard(group) {
         event.preventDefault()
         const member = event.target.elements.member.value
         if (!member) return
-        api("/api/groups", { method: "PATCH", body: { id: group.id, members: [...group.members, member] } }).then(refresh).catch(alert)
+        api(`/api/groups?id=${encodeURIComponent(group.id)}`, { method: "PATCH", body: { members: [...group.members, member] } }).then(refresh).catch(alert)
       } },
     el("select", { name: "member" }, ...repoOptions(group.members)),
     el("button", { class: "ghost", type: "submit", text: "加入" }),
