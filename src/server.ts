@@ -324,7 +324,7 @@ async function addEdge(input: ServerInput, payload: Record<string, unknown>) {
   return mutate(input, (reg) => {
     requireRepo(reg, a)
     requireRepo(reg, b)
-    if (reg.edges.some((edge) => edge.a === a && edge.b === b)) throw new HttpError(409, "edge already exists")
+    if (reg.edges.some((edge) => (edge.a === a && edge.b === b) || (edge.a === b && edge.b === a))) throw new HttpError(409, "edge already exists")
     const edge: Edge = { a, b, ...(note ? { note } : {}) }
     reg.edges.push(edge)
     return { edge }

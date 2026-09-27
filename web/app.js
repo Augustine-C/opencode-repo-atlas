@@ -216,15 +216,16 @@ function repoOptions(exclude = []) {
 }
 
 function fillRepoSelects() {
+  const validKeys = new Set(sortedRepos().map(([key]) => key))
   for (const select of document.querySelectorAll("#edge-add select")) {
     const current = select.value
     select.replaceChildren(el("option", { value: "", text: "选择仓库" }), ...repoOptions())
-    select.value = current
+    select.value = validKeys.has(current) ? current : ""
   }
   const querySelect = $("#query-form select[name=key]")
   const queryCurrent = querySelect.value
   querySelect.replaceChildren(el("option", { value: "", text: "选择仓库" }), ...repoOptions())
-  querySelect.value = queryCurrent
+  querySelect.value = validKeys.has(queryCurrent) ? queryCurrent : ""
 }
 
 // --- edges -----------------------------------------------------------------

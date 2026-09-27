@@ -67,3 +67,16 @@ describe("POST /api/repos by local path", () => {
     }
   })
 })
+
+describe("POST /api/edges", () => {
+  test("rejects reversed duplicate edge", async () => {
+    await withServer(45991, async (port) => {
+      await post(port, "/api/repos", { key: "github.com/acme/a" })
+      await post(port, "/api/repos", { key: "github.com/acme/b" })
+      const first = await post(port, "/api/edges", { a: "github.com/acme/a", b: "github.com/acme/b" })
+      expect(first.status).toBe(200)
+      const reversed = await post(port, "/api/edges", { a: "github.com/acme/b", b: "github.com/acme/a" })
+      expect(reversed.status).toBe(409)
+    })
+  })
+})
