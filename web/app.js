@@ -478,6 +478,14 @@ function wire() {
       })
       .catch(alert)
   })
+  $("#repo-browse").addEventListener("click", async () => {
+    try {
+      const result = await api("/api/pick-directory")
+      if (result.path) $("#repo-add").elements.url.value = result.path
+    } catch (error) {
+      alert(error.message)
+    }
+  })
   $("#group-add").addEventListener("submit", (event) => {
     event.preventDefault()
     const name = event.target.elements.name.value

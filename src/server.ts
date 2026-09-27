@@ -70,6 +70,7 @@ async function route(req: Request, input: ServerInput): Promise<Response> {
 
     if (pathname === "/api/state" && method === "GET") return json(apiState(input))
     if (pathname === "/api/graph" && method === "GET") return json(graph(input.store.current))
+    if (pathname === "/api/pick-directory" && method === "GET") return json(await pickDirectory())
     if (pathname === "/api/related" && method === "GET") {
       const key = queryKey(url)
       if (!input.store.current.repos[key]) return json({ error: `repo ${key} not found` }, 404)
@@ -343,6 +344,20 @@ async function deleteEdge(input: ServerInput, url: URL) {
 }
 
 // --- helpers ---------------------------------------------------------------
+
+async function pickDirectory(): Promise<{ path: string | null }> {
+  if (process.platform !== "darwin") {
+    throw new HttpError(501, "directory picker is only available on macOS; paste the path manually")
+  }
+  const proc = Bun.spawn(
+    ["osascript", "-e", 'POSIX path of (choose folder with prompt "选择仓库目录")'],
+    { stdout: "pipe", stderr: "pipe", stdin: "ignore" },
+  )
+  const exit = await proc.exited
+  if (exit !== 0) return { path: null }
+  const path = (await new Response(proc.stdout).text()).trim().replace(/\/$/, "")
+  return { path: path.length > 0 ? path : null }
+}
 
 function requireRepo(reg: Registry, key: string) {
   const repo = reg.repos[key]
